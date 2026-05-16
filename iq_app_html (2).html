@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ Test App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        button {
+            font-size: 1rem;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        }
+
+        .btn-green {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            color: white;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .btn-green:hover {
+            background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #475569;
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 0.5rem;
+            background: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #2563eb;
+            transition: width 0.3s ease;
+        }
+
+        .question-option {
+            width: 100%;
+            text-align: left;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            margin-top: 0.75rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .question-option:hover:not(:disabled) {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .question-option:disabled {
+            cursor: not-allowed;
+        }
+
+        .question-option.correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+        }
+
+        .question-option.incorrect {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .question-option.neutral-disabled {
+            border-color: #e2e8f0;
+            background: #f8fafc;
+            color: #94a3b8;
+        }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 80px);
+            gap: 1rem;
+            padding: 2rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+
+        .matrix-cell {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .pattern-visual {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-size: 2.5rem;
+            line-height: 2;
+        }
+
+        .shape-visual {
+            background: white;
+            border: 2px solid #2563eb;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-size: 3rem;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .btn-back {
+            color: white;
+            background: none;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            padding: 0;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-box {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .iq-score {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .iq-number {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 2px solid #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #1e293b;
+        }
+
+        .category-card:hover {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-color: #2563eb;
+        }
+
+        .category-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-name {
+            font-weight: bold;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 1.5rem;
+            }
+            .matrix-grid {
+                grid-template-columns: repeat(3, 60px);
+            }
+            .matrix-cell {
+                width: 60px;
+                height: 60px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Initial Test Screen -->
+    <div id="initialTestScreen" class="container">
+        <div class="card" style="max-width: 400px; margin: 3rem auto;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🧠</div>
+                <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">IQ Test</h1>
+                <p style="color: #64748b;">Professional Intelligence Assessment</p>
+            </div>
+
+            <label>Full Name *</label>
+            <input type="text" id="inputName" placeholder="Enter your name">
+
+            <label>Age *</label>
+            <input type="number" id="inputAge" placeholder="Enter your age">
+
+            <label>Gender *</label>
+            <select id="inputGender">
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+
+            <label>Education Level *</label>
+            <select id="inputEducation">
+                <option value="">Select level</option>
+                <option value="high-school">High School</option>
+                <option value="bachelors">Bachelor's Degree</option>
+                <option value="masters">Master's Degree</option>
+            </select>
+
+            <button class="btn-primary" onclick="startInitialTest()">Start Test</button>
+        </div>
+    </div>
+
+    <!-- Test Screen -->
+    <div id="testScreen" class="container hidden">
+        <div class="card" style="max-width: 900px; margin: 2rem auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h1 style="font-size: 1.5rem;">IQ Test</h1>
+                <span style="font-size: 0.875rem; font-weight: 600; background: #f1f5f9; padding: 0.5rem 0.75rem; border-radius: 0.5rem;">
+                    <span id="questionCount">1</span>/30
+                </span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+            </div>
+
+            <h2 id="questionText" style="font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 1rem;"></h2>
+
+            <div id="visualContainer"></div>
+            
+            <div id="optionsContainer"></div>
+        </div>
+    </div>
+
+    <!-- Test Results Screen -->
+    <div id="testResultsScreen" class="container hidden">
+        <div class="card" style="max-width: 400px; margin: 3rem auto; text-align: center;">
+            <h1 style="font-size: 2rem; margin-bottom: 1.5rem;">Test Complete!</h1>
+
+            <div class="iq-score">
+                <p style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Estimated IQ</p>
+                <div class="iq-number" id="resultIQ">100</div>
+                <p style="font-size: 0.875rem; opacity: 0.9;" id="resultStats">100% Correct</p>
+            </div>
+
+            <p style="color: #64748b; margin-top: 1.5rem; margin-bottom: 2rem;" id="welcomeText"></p>
+
+            <button class="btn-primary" onclick="goHome()">Go to Home</button>
+        </div>
+    </div>
+
+    <!-- Home Screen -->
+    <div id="homeScreen" class="container hidden">
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                <div>
+                    <h1 id="homeGreeting" style="font-size: 2rem; margin-bottom: 0.5rem;"></h1>
+                    <p style="color: #64748b;">Improve your intelligence through targeted practice</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">Current IQ</p>
+                    <p style="font-size: 2.5rem; font-weight: bold; color: #2563eb;" id="homeIQ">100</p>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <div class="stat-box">
+                    <div class="stat-label">Age</div>
+                    <div class="stat-value" id="homeAge">--</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Tests Taken</div>
+                    <div class="stat-value" id="homeTests">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Progress</div>
+                    <div class="stat-value" id="homeProgress">N/A</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 1.5rem;">
+            <button class="btn-primary" style="margin: 0; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);" onclick="startRetakeTest()">🔄 Retake Full Test</button>
+            <button class="btn-primary" style="margin: 0; background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);" onclick="goToPracticeSelect()">⚡ Start Practice</button>
+        </div>
+
+        <div class="card" id="historyCard" style="display: none; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">📊 Test History</h2>
+            <div id="historyList"></div>
+        </div>
+
+        <div class="card">
+            <h2 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">🎯 Practice by Category</h2>
+            <div class="grid-2" id="practiceCategories"></div>
+        </div>
+    </div>
+
+    <!-- Practice Select Screen -->
+    <div id="practiceSelectScreen" class="container hidden">
+        <button class="btn-back" onclick="goHome()">← Back to Home</button>
+
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <h1 style="font-size: 2rem; margin-bottom: 1.5rem;">Select Practice Type</h1>
+            <div class="grid-2" id="practiceSelectList"></div>
+        </div>
+    </div>
+
+    <!-- Practice Screen -->
+    <div id="practiceScreen" class="container hidden">
+        <button class="btn-back" onclick="goToPracticeSelect()">← Back</button>
+
+        <div class="card" style="max-width: 900px; margin: 0 auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h1 style="font-size: 1.5rem;">Practice Mode</h1>
+                <span style="font-size: 0.875rem; font-weight: 600; background: #f1f5f9; padding: 0.5rem 0.75rem; border-radius: 0.5rem;">
+                    <span id="practiceCount">1</span>/<span id="practiceTotalQuestions">10</span>
+                </span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="practiceFill" style="width: 0%;"></div>
+            </div>
+
+            <h2 id="practiceQuestionText" style="font-size: 1.25rem; font-weight: 600; margin-top: 1rem; margin-bottom: 1rem;"></h2>
+
+            <div id="practiceVisualContainer"></div>
+
+            <div id="practiceOptionsContainer"></div>
+
+            <div id="practiceFeedback" style="display: none; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;"></div>
+
+            <button id="practiceNextBtn" class="btn-green hidden" onclick="practiceContinue()">Next Question</button>
+        </div>
+    </div>
+
+    <script>
+        const questionBank = [
+            // PATTERN - actual visual patterns
+            { type: 'pattern', question: 'What comes next in this sequence?', visual: '2 | 4 | 6 | 8 | 10 | ?', options: ["11", "12", "14", "15"], correct: 1 },
+            { type: 'pattern', question: 'What is the next number?', visual: '1 | 4 | 9 | 16 | 25 | ?', options: ["30", "36", "42", "49"], correct: 1 },
+            { type: 'pattern', question: 'Continue the sequence', visual: '5 | 10 | 15 | 20 | 25 | ?', options: ["28", "30", "32", "35"], correct: 1 },
+            { type: 'pattern', question: 'What number is next?', visual: '3 | 6 | 9 | 12 | 15 | ?', options: ["16", "17", "18", "19"], correct: 2 },
+            { type: 'pattern', question: 'Find the next number', visual: '2 | 4 | 8 | 16 | 32 | ?', options: ["48", "64", "80", "96"], correct: 1 },
+            { type: 'pattern', question: 'What comes next?', visual: '1 | 1 | 2 | 3 | 5 | 8 | 13 | ?', options: ["16", "19", "21", "26"], correct: 2 },
+            { type: 'pattern', question: 'Continue this pattern', visual: '100 | 90 | 80 | 70 | 60 | ?', options: ["40", "50", "55", "60"], correct: 1 },
+            { type: 'pattern', question: 'What is the next number?', visual: '1 | 3 | 6 | 10 | 15 | ?', options: ["18", "20", "21", "25"], correct: 2 },
+            { type: 'pattern', question: 'Find the next', visual: '7 | 14 | 21 | 28 | 35 | ?', options: ["40", "42", "45", "50"], correct: 1 },
+            { type: 'pattern', question: 'What comes next?', visual: '10 | 20 | 30 | 40 | 50 | ?', options: ["55", "60", "70", "80"], correct: 1 },
+
+            // SPATIAL - actual shape visuals
+            { type: 'spatial', question: 'Which shape comes next?', visual: '▲ | ▲▲ | ▲▲▲ | ?', options: ["▲", "▲▲▲▲", "■", "●"], correct: 1 },
+            { type: 'spatial', question: 'What shape is next in sequence?', visual: '● | ▲ | ■ | ⬠ | ?', options: ["■", "⬠", "⬡", "▲"], correct: 2 },
+            { type: 'spatial', question: 'Count the pattern repeats', visual: '◆ ◆ ◆ | ◆ ◆ ◆ | ◆ ◆ ◆ | ◆ ◆ ◆', options: ["2 repeats", "3 repeats", "4 repeats", "5 repeats"], correct: 2 },
+            { type: 'spatial', question: 'How many triangles total?', visual: '▲<br/>▲ ▲ ▲<br/>(nested)', options: ["1", "3", "4", "10"], correct: 2 },
+            { type: 'spatial', question: 'Count the shapes', visual: '■ ■<br/>■ ■<br/>(grid)', options: ["2", "4", "5", "8"], correct: 2 },
+            { type: 'spatial', question: 'Mental rotation result', visual: '⟲ (rotated 90° clockwise)', options: ["⟳", "⟲", "⟵", "⟶"], correct: 1 },
+            { type: 'spatial', question: 'Which shape completes?', visual: '● | ◐ | ◯ | ?', options: ["●", "◐", "◯", "■"], correct: 2 },
+            { type: 'spatial', question: 'How many edges?', visual: '█ (3D cube)', options: ["6", "8", "12", "15"], correct: 2 },
+            { type: 'spatial', question: 'Mirror image is?', visual: '▶ (original) → ? (mirror)', options: ["▶", "◀", "▲", "▼"], correct: 1 },
+            { type: 'spatial', question: 'What comes next?', visual: '| | || | ||| | |||| | ?', options: ["||||", "|||||", "||", "|"], correct: 0 },
+
+            // MATRIX - actual grid visuals
+            { type: 'matrix', question: 'What replaces the ?', grid: [[1, 2, 3], [4, 5, 6], [7, 8, '?']], options: ["8", "9", "10", "11"], correct: 1 },
+            { type: 'matrix', question: 'Find the missing number', grid: [[2, 4, 6], [3, 6, 9], [4, 8, '?']], options: ["10", "12", "14", "16"], correct: 1 },
+            { type: 'matrix', question: 'What number goes here?', grid: [[5, 10, 15], [7, 14, 21], [6, 12, '?']], options: ["18", "20", "22", "24"], correct: 0 },
+            { type: 'matrix', question: 'Complete the grid', grid: [[1, 2, 2], [2, 3, 6], [3, 4, '?']], options: ["10", "12", "14", "16"], correct: 1 },
+            { type: 'matrix', question: 'Solve this', grid: [[10, 5, 15], [8, 4, 12], [6, 3, '?']], options: ["8", "9", "10", "12"], correct: 1 },
+            { type: 'matrix', question: 'Find the value', grid: [[3, 6, 18], [2, 8, 16], [4, 12, '?']], options: ["36", "42", "48", "54"], correct: 2 },
+            { type: 'matrix', question: 'What completes this?', grid: [[4, 8, 12], [7, 14, 21], [9, 18, '?']], options: ["25", "26", "27", "28"], correct: 2 },
+            { type: 'matrix', question: 'Complete the matrix', grid: [[12, 3, 9], [20, 5, 15], [16, 4, '?']], options: ["10", "12", "14", "16"], correct: 1 },
+            { type: 'matrix', question: 'Find the missing number', grid: [[2, 5, 10], [3, 7, 21], [4, 6, '?']], options: ["20", "24", "28", "30"], correct: 1 },
+            { type: 'matrix', question: 'Solve the grid', grid: [[1, 8, 27], [2, 16, 54], [3, 24, '?']], options: ["72", "75", "80", "81"], correct: 3 },
+
+            // LOGIC - clear statements
+            { type: 'logic', question: 'All students study. John is a student. Therefore:', visual: 'All S study | J is S | J?', options: ["Doesn\'t study", "Might study", "Studies", "Unclear"], correct: 2 },
+            { type: 'logic', question: 'All roses are flowers. Flowers fade. Therefore:', visual: 'R ⊆ F | F fade | R?', options: ["Fades", "Might fade", "Doesn\'t fade", "Unclear"], correct: 0 },
+            { type: 'logic', question: 'No birds are fish. Parrots are birds. Therefore:', visual: 'B ≠ F | P ⊆ B | P?', options: ["Are fish", "Aren\'t fish", "Might be fish", "Unclear"], correct: 1 },
+            { type: 'logic', question: 'Some cats are black. Black things are dark. Therefore:', visual: 'Some C black | B dark | C?', options: ["All dark", "Some dark", "Not dark", "Unclear"], correct: 1 },
+            { type: 'logic', question: 'All A are B. Some B are C. Therefore:', visual: 'A ⊆ B | Some B=C | A?', options: ["All C", "Some C", "None C", "Cannot determine"], correct: 3 },
+            { type: 'logic', question: 'If rain then wet. Ground is wet. Therefore:', visual: 'Rain→Wet | Wet | Rain?', options: ["Rained", "Might rain", "Might not rain", "Cannot determine"], correct: 2 },
+            { type: 'logic', question: 'Dogs are animals. Animals breathe. Therefore:', visual: 'D ⊆ A | A breathe | D?', options: ["Breathe", "Might breathe", "Don\'t breathe", "Unclear"], correct: 0 },
+            { type: 'logic', question: 'No mammals cold-blooded. Dogs mammals. Therefore:', visual: 'M ≠ CB | D ⊆ M | D?', options: ["Cold-blooded", "Not cold-blooded", "Might be", "Unclear"], correct: 1 },
+            { type: 'logic', question: 'Some athletes swim. Swimmers exercise. Therefore:', visual: 'Some A swim | Sw exercise | A?', options: ["All exercise", "Some exercise", "Don\'t exercise", "Cannot determine"], correct: 1 },
+            { type: 'logic', question: 'All squares are rectangles. Some rectangles aren\'t squares. True?', visual: 'Sq ⊆ R | Some R≠Sq | True?', options: ["False", "True", "Maybe", "Unsure"], correct: 1 },
+
+            // ANALOGY - clear relationships
+            { type: 'analogy', question: 'Circle is to Sphere as Square is to:', visual: '2D circle → 3D | 2D square → 3D ?', options: ["Cube", "Triangle", "Rectangle", "Diamond"], correct: 0 },
+            { type: 'analogy', question: 'Day is to Night as Summer is to:', visual: 'Day ↔ Night | Summer ↔ ?', options: ["Rain", "Winter", "Hot", "Sun"], correct: 1 },
+            { type: 'analogy', question: 'Doctor heals. Teacher educates:', visual: 'Doctor → Patients | Teacher → ?', options: ["Schools", "Students", "Subjects", "Textbooks"], correct: 1 },
+            { type: 'analogy', question: 'Fish lives in Water. Bird lives in:', visual: 'Fish → Water | Bird → ?', options: ["Nest", "Air", "Sky", "Trees"], correct: 1 },
+            { type: 'analogy', question: 'Thermometer measures temperature. Compass measures:', visual: 'Thermo → Temp | Compass → ?', options: ["Distance", "Direction", "Speed", "Time"], correct: 1 },
+            { type: 'analogy', question: 'Knife cuts. Hammer:', visual: 'Knife action = cut | Hammer = ?', options: ["Builds", "Pounds", "Fixes", "Moves"], correct: 1 },
+            { type: 'analogy', question: 'Sad is to Happy as Cold is to:', visual: 'Sad ↔ Happy | Cold ↔ ?', options: ["Freezing", "Hot", "Warm", "Cool"], correct: 1 },
+            { type: 'analogy', question: 'Lion is to Pride as Fish is to:', visual: 'Lion group = Pride | Fish group = ?', options: ["School", "Swarm", "Pod", "Flock"], correct: 0 },
+            { type: 'analogy', question: 'Architect designs. Author writes:', visual: 'Arch → Buildings | Author → ?', options: ["Pen", "Paper", "Books", "Words"], correct: 2 },
+            { type: 'analogy', question: 'Hungry is to Food as Thirsty is to:', visual: 'Hungry → Food | Thirsty → ?', options: ["Glass", "Water", "Drink", "Cup"], correct: 1 }
+        ];
+
+        const practiceCategories = [
+            { name: 'Spatial Reasoning', icon: '🎯', type: 'spatial' },
+            { name: 'Pattern Recognition', icon: '🔢', type: 'pattern' },
+            { name: 'Matrix Reasoning', icon: '⬜', type: 'matrix' },
+            { name: 'Logic & Deduction', icon: '🧠', type: 'logic' },
+            { name: 'Analogies', icon: '↔️', type: 'analogy' }
+        ];
+
+        let userProfile = { name: '', age: '', gender: '', education: '', estimatedIQ: null, testHistory: [] };
+        let currentQuestion = 0;
+        let answers = [];
+        let currentPracticeType = null;
+        let isAnswered = false;
+        let selectedQuestions = [];
+
+        function getRandomQuestions(count) {
+            let shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        function hideAll() {
+            document.querySelectorAll('[id$="Screen"]').forEach(el => el.classList.add('hidden'));
+        }
+
+        function show(screenId) {
+            hideAll();
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function startInitialTest() {
+            const name = document.getElementById('inputName').value;
+            const age = document.getElementById('inputAge').value;
+            const gender = document.getElementById('inputGender').value;
+            const education = document.getElementById('inputEducation').value;
+
+            if (!name || !age || !gender || !education) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            userProfile = { name, age, gender, education, estimatedIQ: null, testHistory: [] };
+            currentQuestion = 0;
+            answers = [];
+            selectedQuestions = getRandomQuestions(30);
+            showQuestion();
+            show('testScreen');
+        }
+
+        function showQuestion() {
+            const q = selectedQuestions[currentQuestion];
+            document.getElementById('questionText').innerText = q.question;
+            document.getElementById('questionCount').innerText = currentQuestion + 1;
+            document.getElementById('progressFill').style.width = ((currentQuestion + 1) / 30 * 100) + '%';
+
+            const visualContainer = document.getElementById('visualContainer');
+            visualContainer.innerHTML = '';
+
+            if (q.grid) {
+                const matrixGrid = document.createElement('div');
+                matrixGrid.className = 'matrix-grid';
+                q.grid.forEach(row => {
+                    row.forEach(cell => {
+                        const div = document.createElement('div');
+                        div.className = 'matrix-cell';
+                        div.innerText = cell;
+                        matrixGrid.appendChild(div);
+                    });
+                });
+                visualContainer.appendChild(matrixGrid);
+            } else if (q.visual) {
+                const patternDiv = document.createElement('div');
+                if (q.type === 'spatial') {
+                    patternDiv.className = 'shape-visual';
+                } else {
+                    patternDiv.className = 'pattern-visual';
+                }
+                patternDiv.innerHTML = q.visual;
+                visualContainer.appendChild(patternDiv);
+            }
+
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            q.options.forEach((option, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'question-option';
+                btn.innerText = String.fromCharCode(65 + i) + '. ' + option;
+                btn.onclick = () => handleAnswer(i);
+                container.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(index) {
+            answers.push(index);
+            if (currentQuestion < 29) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                showTestResults();
+            }
+        }
+
+        function calculateIQ(correctCount) {
+            const percentage = (correctCount / 30) * 100;
+            let score = 70 + (percentage * 0.6);
+            const age = parseInt(userProfile.age);
+            if (age < 18) score += 3;
+            else if (age > 65) score -= 2;
+            return Math.round(score);
+        }
+
+        function showTestResults() {
+            const correctCount = answers.filter((a, i) => a === selectedQuestions[i].correct).length;
+            const iq = calculateIQ(correctCount);
+
+            userProfile.estimatedIQ = iq;
+            userProfile.testHistory.push({ date: new Date().toLocaleDateString(), score: iq });
+
+            document.getElementById('resultIQ').innerText = iq;
+            document.getElementById('resultStats').innerText = Math.round((correctCount / 30) * 100) + '% Correct (' + correctCount + '/30)';
+            document.getElementById('welcomeText').innerText = 'Welcome, ' + userProfile.name + '! Your profile is ready. Let\'s improve your IQ through practice.';
+
+            show('testResultsScreen');
+        }
+
+        function goHome() {
+            renderHome();
+            show('homeScreen');
+        }
+
+        function renderHome() {
+            document.getElementById('homeGreeting').innerText = 'Welcome, ' + userProfile.name + '!';
+            document.getElementById('homeIQ').innerText = userProfile.estimatedIQ;
+            document.getElementById('homeAge').innerText = userProfile.age;
+            document.getElementById('homeTests').innerText = userProfile.testHistory.length;
+
+            if (userProfile.testHistory.length > 1) {
+                const progress = userProfile.testHistory[userProfile.testHistory.length - 1].score - userProfile.testHistory[0].score;
+                document.getElementById('homeProgress').innerText = (progress > 0 ? '+' : '') + progress;
+            } else {
+                document.getElementById('homeProgress').innerText = 'N/A';
+            }
+
+            if (userProfile.testHistory.length > 0) {
+                document.getElementById('historyCard').style.display = 'block';
+                const historyList = document.getElementById('historyList');
+                historyList.innerHTML = '';
+                userProfile.testHistory.forEach(test => {
+                    const div = document.createElement('div');
+                    div.style.display = 'flex';
+                    div.style.justifyContent = 'space-between';
+                    div.style.padding = '0.75rem';
+                    div.style.background = '#f8fafc';
+                    div.style.borderRadius = '0.5rem';
+                    div.style.marginTop = '0.5rem';
+                    div.innerHTML = '<span>' + test.date + '</span><span style="font-weight: bold; color: #2563eb;">' + test.score + '</span>';
+                    historyList.appendChild(div);
+                });
+            }
+
+            const categoriesContainer = document.getElementById('practiceCategories');
+            categoriesContainer.innerHTML = '';
+            practiceCategories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'category-card';
+                btn.innerHTML = '<div class="category-icon">' + cat.icon + '</div><div class="category-name">' + cat.name + '</div>';
+                btn.onclick = () => startPracticeByType(cat.type);
+                categoriesContainer.appendChild(btn);
+            });
+        }
+
+        function goToPracticeSelect() {
+            const container = document.getElementById('practiceSelectList');
+            container.innerHTML = '';
+            practiceCategories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'category-card';
+                btn.innerHTML = '<div class="category-icon">' + cat.icon + '</div><div class="category-name">' + cat.name + '</div>';
+                btn.onclick = () => startPracticeByType(cat.type);
+                container.appendChild(btn);
+            });
+            show('practiceSelectScreen');
+        }
+
+        function startPracticeByType(type) {
+            currentPracticeType = type;
+            currentQuestion = 0;
+            answers = [];
+            isAnswered = false;
+            selectedQuestions = questionBank.filter(q => q.type === type).sort(() => 0.5 - Math.random());
+            showPracticeQuestion();
+            show('practiceScreen');
+        }
+
+        function showPracticeQuestion() {
+            const q = selectedQuestions[currentQuestion];
+
+            document.getElementById('practiceQuestionText').innerText = q.question;
+            document.getElementById('practiceCount').innerText = currentQuestion + 1;
+            document.getElementById('practiceTotalQuestions').innerText = selectedQuestions.length;
+            document.getElementById('practiceFill').style.width = ((currentQuestion + 1) / selectedQuestions.length * 100) + '%';
+
+            const visualContainer = document.getElementById('practiceVisualContainer');
+            visualContainer.innerHTML = '';
+
+            if (q.grid) {
+                const matrixGrid = document.createElement('div');
+                matrixGrid.className = 'matrix-grid';
+                q.grid.forEach(row => {
+                    row.forEach(cell => {
+                        const div = document.createElement('div');
+                        div.className = 'matrix-cell';
+                        div.innerText = cell;
+                        matrixGrid.appendChild(div);
+                    });
+                });
+                visualContainer.appendChild(matrixGrid);
+            } else if (q.visual) {
+                const patternDiv = document.createElement('div');
+                if (q.type === 'spatial') {
+                    patternDiv.className = 'shape-visual';
+                } else {
+                    patternDiv.className = 'pattern-visual';
+                }
+                patternDiv.innerHTML = q.visual;
+                visualContainer.appendChild(patternDiv);
+            }
+
+            const container = document.getElementById('practiceOptionsContainer');
+            container.innerHTML = '';
+            q.options.forEach((option, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'question-option';
+                btn.innerText = String.fromCharCode(65 + i) + '. ' + option;
+                btn.onclick = () => handlePracticeAnswer(i);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('practiceFeedback').style.display = 'none';
+            document.getElementById('practiceNextBtn').classList.add('hidden');
+            isAnswered = false;
+        }
+
+        function handlePracticeAnswer(index) {
+            if (isAnswered) return;
+
+            isAnswered = true;
+            answers.push(index);
+
+            const q = selectedQuestions[currentQuestion];
+            const isCorrect = index === q.correct;
+
+            const buttons = document.querySelectorAll('#practiceOptionsContainer .question-option');
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === q.correct) {
+                    btn.classList.add('correct');
+                } else if (i === index && !isCorrect) {
+                    btn.classList.add('incorrect');
+                } else if (i !== q.correct) {
+                    btn.classList.add('neutral-disabled');
+                }
+            });
+
+            const feedback = document.getElementById('practiceFeedback');
+            if (isCorrect) {
+                feedback.style.background = '#f0fdf4';
+                feedback.style.borderLeft = '4px solid #22c55e';
+                feedback.innerHTML = '<div style="font-weight: 600; color: #166534;">✓ Correct!</div>';
+            } else {
+                feedback.style.background = '#eff6ff';
+                feedback.style.borderLeft = '4px solid #2563eb';
+                feedback.innerHTML = '<div style="font-weight: 600; color: #1e40af;">The correct answer is: ' + q.options[q.correct] + '</div>';
+            }
+            feedback.style.display = 'block';
+
+            document.getElementById('practiceNextBtn').classList.remove('hidden');
+        }
+
+        function practiceContinue() {
+            if (currentQuestion < selectedQuestions.length - 1) {
+                currentQuestion++;
+                showPracticeQuestion();
+            } else {
+                goHome();
+            }
+        }
+
+        function startRetakeTest() {
+            currentQuestion = 0;
+            answers = [];
+            selectedQuestions = getRandomQuestions(30);
+            showQuestion();
+            show('testScreen');
+        }
+
+        show('initialTestScreen');
+    </script>
+</body>
+</html>
